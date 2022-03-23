@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     private List<ImageView> diceImages = new ArrayList<>();
     private Button rollButton;
     private int[] diceIndexes;
-    private int orientation;
 
     // table contains all image ids
     private final int[] dicesArray = {
@@ -37,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        orientation = getResources().getConfiguration().orientation;
-
         // Step 2 : references fields to UI objects
         ConstraintLayout rootLayout = findViewById(R.id.rootLayout);
         for (int i = 0; i < rootLayout.getChildCount(); i++) {
@@ -49,13 +46,18 @@ public class MainActivity extends AppCompatActivity {
         }
         diceIndexes = new  int[diceImages.size()];
 
+        // init default
+        for(int i = 0; i < diceIndexes.length; i++) {
+            diceImages.get(i).setImageResource(dicesArray[diceIndexes[i]]);
+        }
+
         rollButton = findViewById(R.id.rollButton);
 
         // restore state
         if (savedInstanceState != null) {
 
             for(int i = 0; i < diceIndexes.length; i++) {
-                String key = orientation + "diceIndexes" + i;
+                String key = "diceIndexes" + i;
                diceIndexes[i] = savedInstanceState.getInt(key);
                 Log.d("onCreate", "" + key + "=" + diceIndexes[i]);
                diceImages.get(i).setImageResource(dicesArray[diceIndexes[i]]);
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         // save index of image
         for(int i = 0; i < diceIndexes.length; i++) {
-            String key = orientation + "diceIndexes" + i;
+            String key = "diceIndexes" + i;
             outState.putInt(key, diceIndexes[i]);
             Log.d("onSaveInstanceState", key + "=" + outState.getInt(key));
         }
