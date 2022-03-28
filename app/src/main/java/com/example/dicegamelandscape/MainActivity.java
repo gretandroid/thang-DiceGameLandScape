@@ -1,6 +1,5 @@
 package com.example.dicegamelandscape;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends LogableActivity {
 
@@ -22,7 +20,7 @@ public class MainActivity extends LogableActivity {
     private DataModel model; // ViewModel solution
 
     // table contains all image ids
-    private final int[] dicesArray = {
+    private final int[] imageIndexes = {
             R.drawable.de1,
             R.drawable.de2,
             R.drawable.de3,
@@ -78,7 +76,7 @@ public class MainActivity extends LogableActivity {
         for(int i = 0; i < diceImages.size(); i++) {
             final int pos = i;
             model.getDiceIndex(pos).observe(this, diceIndex ->
-            diceImages.get(pos).setImageResource(dicesArray[diceIndex]));
+            diceImages.get(pos).setImageResource(imageIndexes[diceIndex]));
         }
     }
 
@@ -107,7 +105,7 @@ public class MainActivity extends LogableActivity {
     } */
 
     public void onClickRollButton(View view) {
-        model.launchDices(diceImages.size(), dicesArray.length);
+        model.launchDices(diceImages.size(), imageIndexes.length);
     }
 
     /**
