@@ -1,5 +1,6 @@
 package com.example.dicegamelandscape;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Random;
 public class DataModel extends LogableViewModel {
     private List<MutableLiveData<Integer>> mDiceIndexes = new ArrayList<>();
 
-    public MutableLiveData<Integer> getDiceIndex(int pos) {
+    public LiveData<Integer> getDiceIndex(int pos) {
         if (pos >= mDiceIndexes.size()) {
             mDiceIndexes.add(new MutableLiveData<>());
             return mDiceIndexes.get(mDiceIndexes.size() - 1);
