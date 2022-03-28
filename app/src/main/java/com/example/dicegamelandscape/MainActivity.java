@@ -1,11 +1,10 @@
 package com.example.dicegamelandscape;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,12 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends LogableActivity {
 
     // Step 1 : declare fields corresponding to UI elements
     private List<ImageView> diceImages = new ArrayList<>();
     private Button rollButton;
-    private int[] diceIndexes;
+    //    private int[] diceIndexes; // for onSaveInstanceState solution
+    private DataModel model; // ViewModel solution
 
     // table contains all image ids
     private final int[] dicesArray = {
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Step 2 : references fields to UI objects
+        rollButton = findViewById(R.id.rollButton);
+
         ConstraintLayout rootLayout = findViewById(R.id.rootLayout);
         for (int i = 0; i < rootLayout.getChildCount(); i++) {
             View child = rootLayout.getChildAt(i);
@@ -44,15 +46,18 @@ public class MainActivity extends AppCompatActivity {
                 diceImages.add((ImageView) child);
             }
         }
+
+        // --- onSaveInstanceState solution --- //
+        /*
         diceIndexes = new  int[diceImages.size()];
 
         // init default
         for(int i = 0; i < diceIndexes.length; i++) {
             diceImages.get(i).setImageResource(dicesArray[diceIndexes[i]]);
-        }
+        } */
 
-        rollButton = findViewById(R.id.rollButton);
 
+        /*
         // restore state
         if (savedInstanceState != null) {
 
@@ -62,9 +67,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("onCreate", "" + key + "=" + diceIndexes[i]);
                diceImages.get(i).setImageResource(dicesArray[diceIndexes[i]]);
             }
+        } */
+
+        // --- ViewModel solution --- //
+
+        // init model
+        model = new ViewModelProvider(this).get(DataModel.class);
+
+        // subscribe observers
+        for(int i = 0; i < diceImages.size(); i++) {
+            final int pos = i;
+            model.getDiceIndex(pos).observe(this, diceIndex ->
+            diceImages.get(pos).setImageResource(dicesArray[diceIndex]));
         }
     }
 
+    /*
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -76,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onSaveInstanceState", key + "=" + outState.getInt(key));
         }
 
-    }
+    } */
 
+    /*
     public void onClickRollButton(View view) {
         diceImages.forEach( diceImage -> {
             int i = diceImages.indexOf(diceImage);
@@ -85,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
             // Show new image for two dices
             diceImage.setImageResource(dicesArray[diceIndexes[i]]);
         });
+    } */
+
+    public void onClickRollButton(View view) {
+        model.launchDices(diceImages.size(), dicesArray.length);
     }
 
     /**
@@ -92,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
      * @param bound
      * @return generated random number
      */
+    /*
     private int generateRandomIndex(int bound) {
         // Generate an random number between 1-bound
         int randomNumber;
@@ -100,5 +124,5 @@ public class MainActivity extends AppCompatActivity {
 
         // return the generated index
         return randomNumber;
-    }
+    } */
 }
